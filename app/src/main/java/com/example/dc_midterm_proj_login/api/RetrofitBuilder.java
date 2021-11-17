@@ -22,4 +22,6 @@ public class RetrofitBuilder {
     public void setRetrofit(Retrofit retrofit) {
         this.retrofit = retrofit;
     }
+
+
 }

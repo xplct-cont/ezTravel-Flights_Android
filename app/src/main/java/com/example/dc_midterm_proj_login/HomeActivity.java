@@ -1,24 +1,48 @@
 package com.example.dc_midterm_proj_login;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.denzcoskun.imageslider.ImageSlider;
 import com.denzcoskun.imageslider.models.SlideModel;
+import com.example.dc_midterm_proj_login.adapters.BookedAdapter;
+import com.example.dc_midterm_proj_login.api.RequestPlaceholder;
+import com.example.dc_midterm_proj_login.api.RetrofitBuilder;
+import com.example.dc_midterm_proj_login.pojos.Booked;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
-    EditText origin, passengername, age;
-    Button contBtn;
+public class HomeActivity extends AppCompatActivity {
+    public RetrofitBuilder retrofitBuilder;
+    public RequestPlaceholder requestPlaceholder;
+    public RecyclerView bookedRecyclerView;
+    public List<Booked> bookedList;
+    public BookedAdapter bookedAdapter;
+    private SwipeRefreshLayout swiperefresh;
+    public Button back;
+    public Button explore;
 
 
     @Override
@@ -26,56 +50,103 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        origin = findViewById(R.id.origin);
-        passengername = findViewById(R.id.passengername);
-        age = findViewById(R.id.age);
-        contBtn = findViewById(R.id.contBtn);
+        retrofitBuilder = new RetrofitBuilder();
+        requestPlaceholder = retrofitBuilder.getRetrofit().create(RequestPlaceholder.class);
 
+        swiperefresh = findViewById(R.id.swiperefresh);
+        bookedRecyclerView = findViewById(R.id.bookedRecyclerView);
+        bookedList = new ArrayList<>();
+        bookedAdapter = new BookedAdapter(bookedList, this);
+        bookedRecyclerView.setAdapter(bookedAdapter);
+        bookedRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        back = findViewById(R.id.back);
+        explore = findViewById(R.id.explore);
 
-        ImageSlider imageSlider = findViewById(R.id.slider);
-        List<SlideModel> slideModels = new ArrayList<>();
-
-        slideModels.add(new SlideModel(R.drawable.uno));
-        slideModels.add(new SlideModel("https://c0.wallpaperflare.com/preview/909/575/675/boarding-pass-euro-ticket-travel-documents.jpg"));
-        slideModels.add(new SlideModel("https://c0.wallpaperflare.com/preview/519/987/648/adult-blur-business-trip-businessman.jpg"));
-        slideModels.add(new SlideModel("https://images.unsplash.com/photo-1454496406107-dc34337da8d6?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=1300&q=80"));
-        slideModels.add(new SlideModel("https://4.imimg.com/data4/FB/IO/MY-10838749/air-500x500.jpg"));
-
-        imageSlider.setImageList(slideModels, true);
-
-
-        contBtn.setOnClickListener(new View.OnClickListener() {
+        explore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validateData();
+                if(explore.isClickable());
+                openExplore();
             }
         });
 
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (back.isClickable());
+                openLogin();
+            }
+        });
+
+        swiperefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                populateBooked();
+            }
+        });
+
+        populateBooked();
+
+
     }
 
 
-    private void validateData() {
-        String reg_origin = origin.getText().toString();
-        String reg_passname = passengername.getText().toString();
-        String reg_age = age.getText().toString();
-
-
-        if (TextUtils.isEmpty(reg_origin)) {
-            origin.setError("Please enter Origin");
-            return;
-
-        }
-
-        if (TextUtils.isEmpty(reg_passname)) {
-            passengername.setError("Please enter Passenger Name");
-            passengername.requestFocus();
-            return;
-        }
-
-        if (TextUtils.isEmpty(reg_age)) {
-            age.setError("Please enter Age");
-            age.requestFocus();
-            return;
-        }
+    private void openLogin() {
+        Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
+        startActivity(intent);
     }
+
+    private void openExplore() {
+        Intent intent = new Intent(HomeActivity.this, ExploreActivity.class);
+        startActivity(intent);
+
+    }
+
+
+    public void populateBooked() {
+
+        try {
+
+            bookedList.clear();
+
+            Call<List<Booked>> bookedCall = requestPlaceholder.getAllPosts("L2tfLs4URiKY9aDbMZ0FVNy4jf6wdjDxLuhBujOOK1Sv36ygf7uTJjNWMzNIPa9a", "14");
+
+            bookedCall.enqueue(new Callback<List<Booked>>() {
+                @Override
+                public void onResponse(Call<List<Booked>> call, Response<List<Booked>> response) {
+
+                    if (response.isSuccessful()) {
+                        if (response.code() == 200) {
+                            bookedList.addAll(response.body());
+
+                            bookedAdapter.notifyDataSetChanged();//Notifying the bookedAdapter that the data was changed
+
+                            swiperefresh.setRefreshing(false);
+
+                        } else {
+                            Log.e("ERR_GET_POSTS", response.message() + "");
+                            Toast.makeText(HomeActivity.this, "Error Opening Booked Flights", Toast.LENGTH_SHORT).show();
+                        }
+
+                    } else {
+                        Log.e("ERR_GET_POSTS", response.message() + "");
+                        Toast.makeText(HomeActivity.this, "Error Opening Booked Flights", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+
+
+                @Override
+                public void onFailure(Call<List<Booked>> call, Throwable t) {
+
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("ERR_GET_POSTS", e.getMessage());
+
+        }
+
+    }
+
 }

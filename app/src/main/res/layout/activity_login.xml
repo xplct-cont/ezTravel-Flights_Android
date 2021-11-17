@@ -85,12 +85,13 @@
             android:textColor="@color/black" />
 
         <CheckBox
+            android:id="@+id/showpassword"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="30dp"
             android:layout_marginTop="13dp"
             android:fontFamily="@font/poppins_regular"
-            android:text="Remember me"
+            android:text="Show Password"
             android:textColor="@color/black"
             android:textSize="14dp" />
 

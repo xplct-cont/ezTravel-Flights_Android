@@ -5,8 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.HideReturnsTransformationMethod;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,6 +33,7 @@ public class LoginActivity extends AppCompatActivity {
     public MaterialButton loginBtn;
     public ImageView arrow;
     public TextView signup;
+    public CheckBox showpassword;
     public RetrofitBuilder retrofitBuilder;
     public RequestPlaceholder requestPlaceholder;
 
@@ -37,16 +43,29 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         arrow = findViewById(R.id.arrow);
+        showpassword = findViewById(R.id.showpassword);
         loginBtn = findViewById(R.id.loginBtn);
         signup = findViewById(R.id.signup);
 
-
         retrofitBuilder = new RetrofitBuilder();
         requestPlaceholder = retrofitBuilder.getRetrofit().create(RequestPlaceholder.class);
+
+        //Hide and Show Password
+        showpassword.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+
+                }else{
+                    password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+                }
+            }
+        });
+
          signup.setOnClickListener(new View.OnClickListener() {
              @Override
              public void onClick(View v) {
@@ -67,7 +86,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (username.getText() !=null && password.getText() !=null){
                     Call<Login> loginCall = requestPlaceholder.login(new Login(null, username.getText().toString(), null, null,password.getText().toString()));
 
-
                     loginCall.enqueue(new Callback<Login>() {
                         @Override
                         public void onResponse(Call<Login> call, Response<Login> response) {
@@ -85,7 +103,6 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             }
                         }
-
 
 
                         @Override
@@ -107,7 +124,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent intent = new Intent(this , SignupActivity.class);
         startActivity(intent);
     }
-
 
     private void clearInfo() {
         username.getText().clear();

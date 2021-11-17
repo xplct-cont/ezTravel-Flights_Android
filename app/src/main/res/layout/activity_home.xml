@@ -1,108 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bb"
+    android:padding="10dp"
     tools:context=".HomeActivity">
 
-
-    <com.denzcoskun.imageslider.ImageSlider
-        android:id="@+id/slider"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        app:auto_cycle="true"
-        app:delay="0"
-        app:period="3000"
-        app:placeholder="@color/orange"
-        app:corner_radius="20"
-        android:layout_margin="20dp"
-        android:background="@color/orange" />
-
     <LinearLayout
+        android:layout_width="402dp"
+        android:layout_height="690dp"
+        android:orientation="vertical" />
+
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swiperefresh"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/bookedRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="230dp"
-            android:text="Book Now"
-            android:textColor="@color/white"
-            android:textSize="30sp"
-            android:fontFamily="@font/poppins_semibold"
-            android:layout_marginLeft="20dp" />
-    </LinearLayout>
-
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     <LinearLayout
-        android:layout_width="match_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_marginLeft="5dp"
+    android:layout_marginTop="1dp"
+    android:orientation="horizontal">
+    <Button
+        android:id="@+id/back"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_marginLeft="5dp"
+        android:text="Back"/>
 
-        <EditText
-            android:id="@+id/origin"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="300dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/card_baclground"
-            android:drawableLeft="@drawable/ic_action_name"
-            android:fontFamily="@font/poppins_regular"
-            android:hint="Origin"
-            android:inputType="text"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:textColor="@color/black" />
-
-
-        <EditText
-            android:id="@+id/passengername"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/card_baclground"
-            android:drawableLeft="@drawable/user_icon"
-            android:fontFamily="@font/poppins_regular"
-            android:hint="Passenger Name"
-            android:inputType="text"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:textColor="@color/black" />
-
-        <EditText
-            android:id="@+id/age"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="30dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="30dp"
-            android:background="@drawable/card_baclground"
-            android:drawableLeft="@drawable/age"
-            android:fontFamily="@font/poppins_regular"
-            android:hint="Age"
-            android:inputType="number"
-            android:paddingLeft="25dp"
-            android:paddingRight="25dp"
-            android:textColor="@color/black" />
-
-        <Button
-            android:id="@+id/contBtn"
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="30dp"
-            android:text="Continue"
-            android:background="@drawable/button_background"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            android:fontFamily="@font/poppins_semibold"/>
-
-    </LinearLayout>
-
-
-
+    <Button
+        android:id="@+id/explore"
+        android:layout_width="150dp"
+        android:layout_marginLeft="20dp"
+        android:layout_height="wrap_content"
+        android:text="Explore"/>
+</LinearLayout>
 </RelativeLayout>
+
+
+
+
